@@ -238,6 +238,34 @@ róla, hogy a `/admin` közvetlen megnyitása vagy frissítése is
 működjön – enélkül a React Router kliensoldali útvonalai 404-et
 adnának Cloudflare Pages-en.
 
+### Hibaelhárítás – "Vite version ... cannot be automatically configured"
+
+2026 folyamán a Cloudflare a klasszikus Pages felületet fokozatosan
+egy egységes "Workers Builds" rendszerre cseréli. Ha a projekted már
+ezen az új felületen jött létre, nem lesz külön "Framework preset"
+mező a beállításoknál – helyette egy automatikus konfiguráló fut le,
+ami megpróbálja a `@cloudflare/vite-plugin`-t bedrótozni, ez viszont
+Vite 6+-at igényel, és ezért ezzel a hibával áll le:
+
+```
+[ERROR] The version of Vite used in the project ("5.4.21") cannot be
+automatically configured. Please update the Vite version to at
+least "6.0.0" and try again.
+```
+
+Ez a projekt egy sima statikus build, nincs szüksége a Cloudflare
+Vite plugin-jére. A `wrangler.jsonc` fájl (ami már a projektben van)
+ezt előre, explicit módon beállítja, így az automatikus konfiguráló
+ki sem fog futni, és a Vite verziót sem kell frissíteni. A
+`not_found_handling: "single-page-application"` beállítás ugyanazt
+a szerepet tölti be, mint a `public/_redirects` fájl: a `/admin`
+útvonal közvetlen megnyitásánál is az `index.html`-t szolgálja ki.
+
+Ha a hiba a `wrangler.jsonc` felküldése után is jelentkezik, érdemes
+egy üres commit-tal újra triggerelni a buildet (a Cloudflare néha a
+korábbi, gyorsítótárazott build-konfigurációt használja az első
+próbálkozásnál).
+
 ### 6. Egyedi domain (opcionális)
 
 **Custom domains** fülön hozzáadhatod a saját domainedet, a Cloudflare
