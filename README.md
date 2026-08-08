@@ -233,10 +233,10 @@ buildet, és pár másodperc múlva élesben lesz egy
 `https://foci-bajnoksag.pages.dev` jellegű címen. Minden `main`
 branch-re történő push-nál automatikusan újra deployol.
 
-A `public/_redirects` fájl (ami már a projektben van) gondoskodik
-róla, hogy a `/admin` közvetlen megnyitása vagy frissítése is
-működjön – enélkül a React Router kliensoldali útvonalai 404-et
-adnának Cloudflare Pages-en.
+A `wrangler.jsonc`-ban lévő `not_found_handling: "single-page-application"`
+beállítás gondoskodik róla, hogy a `/admin` közvetlen megnyitása vagy
+frissítése is működjön – enélkül a React Router kliensoldali
+útvonalai 404-et adnának.
 
 ### Hibaelhárítás – "Vite version ... cannot be automatically configured"
 
@@ -256,10 +256,16 @@ least "6.0.0" and try again.
 Ez a projekt egy sima statikus build, nincs szüksége a Cloudflare
 Vite plugin-jére. A `wrangler.jsonc` fájl (ami már a projektben van)
 ezt előre, explicit módon beállítja, így az automatikus konfiguráló
-ki sem fog futni, és a Vite verziót sem kell frissíteni. A
-`not_found_handling: "single-page-application"` beállítás ugyanazt
-a szerepet tölti be, mint a `public/_redirects` fájl: a `/admin`
-útvonal közvetlen megnyitásánál is az `index.html`-t szolgálja ki.
+ki sem fog futni, és a Vite verziót sem kell frissíteni.
+
+**Fontos:** ne legyen emellett `public/_redirects` fájl is a
+projektben. A `wrangler.jsonc` `not_found_handling` beállítása és egy
+`/* /index.html 200` tartalmú `_redirects` fájl egyszerre ütközik –
+a Cloudflare automatikus URL-normalizálása (ami levágja a `.html`
+végződést) végtelen átirányítási ciklusként értelmezi a kettő
+együttes jelenlétét, és a deploy "Infinite loop detected" hibával
+elszáll. A `not_found_handling` önmagában elég, a `_redirects` fájlra
+nincs szükség.
 
 Ha a hiba a `wrangler.jsonc` felküldése után is jelentkezik, érdemes
 egy üres commit-tal újra triggerelni a buildet (a Cloudflare néha a
