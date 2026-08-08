@@ -7,7 +7,7 @@ export default function App() {
     <BrowserRouter>
       <header className="topbar">
         <Link to="/" className="brand">
-          Kispályás bajnokság
+          Kürtök találkozója 2026 - Kispályás labdarúgú torna
         </Link>
         <Link to="/admin" className="admin-link">
           Admin
