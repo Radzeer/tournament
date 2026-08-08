@@ -145,7 +145,12 @@ h4 {
 }
 .team-name {
   font-size: 0.95rem;
+  font-weight: 700;
   flex: 1;
+}
+.team-name-away {
+  text-align: right;
+  font-weight: 700;
 }
 .score {
   font-family: 'Bebas Neue', sans-serif;

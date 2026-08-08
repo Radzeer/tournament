@@ -28,7 +28,7 @@ export default function ScoreBoard({ match }) {
         <span className="score">
           {match.home_goals} : {match.away_goals}
         </span>
-        <span className="team-name">{match.away_team}</span>
+        <span className="team-name team-name-away">{match.away_team}</span>
       </div>
       {!isLive && <div className="scoreboard-time">{formatDateTime(match.scheduled_at)}</div>}
     </div>
