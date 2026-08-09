@@ -446,3 +446,59 @@ button.danger:hover {
     text-align: center;
   }
 }
+
+.print-button-row {
+  margin-bottom: 1.5rem;
+}
+
+.print-schedule {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-schedule,
+  .print-schedule * {
+    visibility: visible;
+  }
+  .print-schedule {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #000;
+  }
+  .print-schedule h1 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .print-schedule-day {
+    margin-bottom: 1.25rem;
+    break-inside: avoid;
+  }
+  .print-schedule h2 {
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .print-schedule table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .print-schedule th,
+  .print-schedule td {
+    border: 1px solid #999;
+    padding: 4px 8px;
+    text-align: left;
+    font-size: 0.8rem;
+  }
+  .print-schedule thead {
+    display: table-header-group;
+  }
+  .print-schedule tr {
+    break-inside: avoid;
+  }
+}

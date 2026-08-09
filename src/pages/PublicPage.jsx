@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import ScoreBoard from '../components/ScoreBoard.jsx'
 import StandingsTable from '../components/StandingsTable.jsx'
+import PrintableSchedule from '../components/PrintableSchedule.jsx'
 
 export default function PublicPage() {
   const [matches, setMatches] = useState([])
@@ -56,6 +57,12 @@ export default function PublicPage() {
 
   return (
     <main className="page">
+      <div className="print-button-row">
+        <button className="ghost" onClick={() => window.print()}>
+          Menetrend nyomtatása / PDF letöltése
+        </button>
+      </div>
+
       {live.length > 0 && (
         <section>
           <h2>Élő mérkőzések</h2>
@@ -109,6 +116,8 @@ export default function PublicPage() {
           </div>
         </section>
       )}
+
+      <PrintableSchedule matches={matches} />
     </main>
   )
 }
