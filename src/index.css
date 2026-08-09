@@ -449,6 +449,25 @@ button.danger:hover {
 
 .print-button-row {
   margin-bottom: 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.print-day-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+}
+.print-day-select select {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--surface);
 }
 
 .print-schedule {
@@ -471,10 +490,26 @@ button.danger:hover {
     width: 100%;
     color: #000;
   }
+  .print-schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.75rem;
+  }
   .print-schedule h1 {
     font-family: 'Inter', sans-serif;
     font-size: 1.3rem;
-    margin-bottom: 1rem;
+    margin: 0;
+  }
+  .print-qr {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
   }
   .print-schedule-day {
     margin-bottom: 1.25rem;

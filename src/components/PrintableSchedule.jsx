@@ -1,20 +1,5 @@
-function dateKeyOf(iso) {
-  const d = new Date(iso)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-function formatDateHeading(dateKey) {
-  const [y, m, d] = dateKey.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('hu-HU', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
-function formatTime(iso) {
-  return new Date(iso).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })
-}
+import { QRCodeSVG } from 'qrcode.react'
+import { dateKeyOf, formatDateHeading, formatTime } from '../lib/dateFormat.js'
 
 function groupByDate(matches) {
   const map = new Map()
@@ -26,12 +11,21 @@ function groupByDate(matches) {
   return [...map.entries()]
 }
 
-export default function PrintableSchedule({ matches }) {
+export default function PrintableSchedule({ matches, siteUrl }) {
   const days = groupByDate(matches)
 
   return (
     <div className="print-schedule">
-      <h1>Mérkőzés menetrend</h1>
+      <div className="print-schedule-header">
+        <h1>Mérkőzés menetrend</h1>
+        {siteUrl && (
+          <div className="print-qr">
+            <QRCodeSVG value={siteUrl} size={96} />
+            <span>{siteUrl}</span>
+          </div>
+        )}
+      </div>
+
       {days.length === 0 && <p>Nincs felvitt mérkőzés.</p>}
       {days.map(([dateKey, dayMatches]) => (
         <div key={dateKey} className="print-schedule-day">

@@ -6,7 +6,10 @@ mérkőzéseinek adminisztrálásához és élő állásának megjelenítéséhe
 ## Felépítés
 
 - `/` – publikus nézet: élő mérkőzések, tabella, menetrend. Realtime
-  feliratkozással, F5 nélkül frissül minden gólnál.
+  feliratkozással, F5 nélkül frissül minden gólnál. A nap szerint
+  szűrhető, nyomtatható/PDF-be menthető menetrend QR-kóddal is itt
+  érhető el (a QR a `VITE_PUBLIC_SITE_URL` változóban megadott
+  címre mutat).
 - `/admin` – admin nézet: bejelentkezés után mérkőzés indítása, gól/
   büntető rögzítése, mérkőzés lezárása.
 
@@ -175,6 +178,7 @@ Az alkalmazás ezután a `http://localhost:8080` címen érhető el.
 docker build \
   --build-arg VITE_SUPABASE_URL=<supabase-url> \
   --build-arg VITE_SUPABASE_ANON_KEY=<supabase-anon-key> \
+  --build-arg VITE_PUBLIC_SITE_URL=<publikus-url-a-QR-kodhoz> \
   -t foci-bajnoksag .
 
 docker run -p 8080:80 foci-bajnoksag
@@ -225,6 +229,7 @@ Vite build időben égeti a kódba, tehát build előtt kell léteznie:
 |---|---|
 | `VITE_SUPABASE_URL` | a Supabase projekted URL-je |
 | `VITE_SUPABASE_ANON_KEY` | a Supabase projekted anon kulcsa |
+| `VITE_PUBLIC_SITE_URL` | az élesített oldal teljes URL-je (pl. `https://tournament.hollo-attila-82.workers.dev`) – ez kerül a nyomtatott menetrend QR-kódjába |
 
 ### 5. Deploy
 
