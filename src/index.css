@@ -442,4 +442,7 @@ button.danger:hover {
   .scoreboard-teams .team-name {
     flex: 1 1 100%;
   }
+  .scoreboard-teams .team-name-away {
+    text-align: center;
+  }
 }
