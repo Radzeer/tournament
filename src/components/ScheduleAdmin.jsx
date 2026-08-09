@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { generateRoundRobin } from '../lib/roundRobin'
+import { dateKeyOf, formatDateHeading } from '../lib/dateFormat.js'
+import PrintableSchedule from './PrintableSchedule.jsx'
+
+const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin
 
 const COURTS = ['A', 'B']
 
@@ -37,6 +41,7 @@ export default function ScheduleAdmin() {
   const [teams, setTeams] = useState([])
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
+  const [printDay, setPrintDay] = useState('all')
 
   const loadTeams = useCallback(async () => {
     const { data } = await supabase.from('teams').select('*').order('name')
@@ -62,11 +67,37 @@ export default function ScheduleAdmin() {
 
   if (loading) return <p className="hint">Betöltés…</p>
 
+  const availableDays = [...new Set(matches.map((m) => dateKeyOf(m.scheduled_at)))].sort()
+  const printMatches =
+    printDay === 'all' ? matches : matches.filter((m) => dateKeyOf(m.scheduled_at) === printDay)
+
   return (
     <div>
       <ScheduleGenerator teams={teams} existingCount={matches.length} onGenerated={refreshAll} />
       <MatchList matches={matches} onChanged={loadMatches} />
       <AddMatchForm teams={teams} onAdded={loadMatches} />
+
+      <section className="event-panel">
+        <h3>Menetrend nyomtatása</h3>
+        <div className="print-button-row">
+          <label className="print-day-select">
+            Nyomtatandó nap
+            <select value={printDay} onChange={(e) => setPrintDay(e.target.value)}>
+              <option value="all">Összes nap</option>
+              {availableDays.map((day) => (
+                <option key={day} value={day}>
+                  {formatDateHeading(day)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button className="ghost" onClick={() => window.print()}>
+            Menetrend nyomtatása / PDF letöltése
+          </button>
+        </div>
+      </section>
+
+      <PrintableSchedule matches={printMatches} siteUrl={SITE_URL} />
     </div>
   )
 }

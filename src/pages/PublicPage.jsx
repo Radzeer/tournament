@@ -1,17 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { dateKeyOf, formatDateHeading } from '../lib/dateFormat.js'
 import ScoreBoard from '../components/ScoreBoard.jsx'
 import StandingsTable from '../components/StandingsTable.jsx'
-import PrintableSchedule from '../components/PrintableSchedule.jsx'
-
-const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin
 
 export default function PublicPage() {
   const [matches, setMatches] = useState([])
   const [standings, setStandings] = useState([])
   const [loading, setLoading] = useState(true)
-  const [printDay, setPrintDay] = useState('all')
 
   const loadMatches = useCallback(async () => {
     const { data } = await supabase
@@ -59,29 +54,8 @@ export default function PublicPage() {
   const upcoming = matches.filter((m) => m.status === 'upcoming')
   const finished = matches.filter((m) => m.status === 'finished')
 
-  const availableDays = [...new Set(matches.map((m) => dateKeyOf(m.scheduled_at)))].sort()
-  const printMatches =
-    printDay === 'all' ? matches : matches.filter((m) => dateKeyOf(m.scheduled_at) === printDay)
-
   return (
     <main className="page">
-      <div className="print-button-row">
-        <label className="print-day-select">
-          Nyomtatandó nap
-          <select value={printDay} onChange={(e) => setPrintDay(e.target.value)}>
-            <option value="all">Összes nap</option>
-            {availableDays.map((day) => (
-              <option key={day} value={day}>
-                {formatDateHeading(day)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button className="ghost" onClick={() => window.print()}>
-          Menetrend nyomtatása / PDF letöltése
-        </button>
-      </div>
-
       {live.length > 0 && (
         <section>
           <h2>Élő mérkőzések</h2>
@@ -135,8 +109,6 @@ export default function PublicPage() {
           </div>
         </section>
       )}
-
-      <PrintableSchedule matches={printMatches} siteUrl={SITE_URL} />
     </main>
   )
 }

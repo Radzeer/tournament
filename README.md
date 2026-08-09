@@ -6,12 +6,12 @@ mérkőzéseinek adminisztrálásához és élő állásának megjelenítéséhe
 ## Felépítés
 
 - `/` – publikus nézet: élő mérkőzések, tabella, menetrend. Realtime
-  feliratkozással, F5 nélkül frissül minden gólnál. A nap szerint
-  szűrhető, nyomtatható/PDF-be menthető menetrend QR-kóddal is itt
-  érhető el (a QR a `VITE_PUBLIC_SITE_URL` változóban megadott
-  címre mutat).
+  feliratkozással, F5 nélkül frissül minden gólnál.
 - `/admin` – admin nézet: bejelentkezés után mérkőzés indítása, gól/
-  büntető rögzítése, mérkőzés lezárása.
+  büntető rögzítése, mérkőzés lezárása. A Menetrend fülön nap szerint
+  szűrhető, nyomtatható/PDF-be menthető menetrend is található,
+  QR-kóddal (a QR a `VITE_PUBLIC_SITE_URL` változóban megadott
+  címre mutat).
 
 ## Előfeltételek
 
