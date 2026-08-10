@@ -49,11 +49,13 @@ lépésben érdemes kidolgozni):
 ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE match_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE courts ENABLE ROW LEVEL SECURITY;
 
 -- Mindenki olvashatja (publikus nézethez)
 CREATE POLICY "Publikus olvasás" ON teams FOR SELECT USING (true);
 CREATE POLICY "Publikus olvasás" ON matches FOR SELECT USING (true);
 CREATE POLICY "Publikus olvasás" ON match_events FOR SELECT USING (true);
+CREATE POLICY "Publikus olvasás" ON courts FOR SELECT USING (true);
 
 -- Csak bejelentkezett admin írhat
 CREATE POLICY "Admin írás" ON match_events FOR INSERT
@@ -71,6 +73,9 @@ CREATE POLICY "Admin írás" ON teams FOR INSERT
 CREATE POLICY "Admin módosítás" ON teams FOR UPDATE
   USING (auth.role() = 'authenticated');
 CREATE POLICY "Admin törlés" ON teams FOR DELETE
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Admin módosítás" ON courts FOR UPDATE
   USING (auth.role() = 'authenticated');
 ```
 
@@ -139,6 +144,27 @@ már rendben lefut.
 A `DEFAULT 'A'` csak a meglévő sorok feltöltésére kell; utána
 eltávolítjuk, hogy minden új mérkőzésnél kötelező legyen explicit
 pályát választani.
+
+### Migráció – pályánkénti játékvezető hozzáadása
+
+Ha a projektedben még nincs `courts` tábla (a friss `schema.sql` már
+tartalmazza), ezt kell lefuttatnod:
+
+```sql
+CREATE TABLE courts (
+    code          TEXT PRIMARY KEY CHECK (code IN ('A', 'B')),
+    referee_name  TEXT
+);
+
+INSERT INTO courts (code) VALUES ('A'), ('B')
+ON CONFLICT (code) DO NOTHING;
+
+ALTER TABLE courts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Publikus olvasás" ON courts FOR SELECT USING (true);
+CREATE POLICY "Admin módosítás" ON courts FOR UPDATE
+  USING (auth.role() = 'authenticated');
+```
 
 ## Build
 

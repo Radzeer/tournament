@@ -59,7 +59,7 @@ export default function PublicPage() {
       {live.length > 0 && (
         <section>
           <h2>Élő mérkőzések</h2>
-          <div className="scoreboard-grid">
+          <div className="court-columns">
             {live.map((m) => (
               <ScoreBoard key={m.match_id} match={m} />
             ))}
@@ -102,7 +102,7 @@ export default function PublicPage() {
       {finished.length > 0 && (
         <section>
           <h2>Lezárt mérkőzések</h2>
-          <div className="scoreboard-grid">
+          <div className="court-columns">
             {finished.map((m) => (
               <ScoreBoard key={m.match_id} match={m} />
             ))}

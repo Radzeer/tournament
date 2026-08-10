@@ -513,6 +513,19 @@ button.danger:hover {
     font-size: 1.3rem;
     margin: 0;
   }
+  .print-court-title {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #000;
+    padding-bottom: 0.4rem;
+  }
+  .print-referee-note {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+  .print-page-break {
+    break-before: page;
+  }
   .print-qr {
     display: flex;
     flex-direction: column;

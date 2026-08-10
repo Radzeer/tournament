@@ -40,6 +40,7 @@ function formatDateTime(iso) {
 export default function ScheduleAdmin() {
   const [teams, setTeams] = useState([])
   const [matches, setMatches] = useState([])
+  const [courts, setCourts] = useState([])
   const [loading, setLoading] = useState(true)
   const [printDay, setPrintDay] = useState('all')
 
@@ -56,9 +57,14 @@ export default function ScheduleAdmin() {
     setMatches(data ?? [])
   }, [])
 
+  const loadCourts = useCallback(async () => {
+    const { data } = await supabase.from('courts').select('*').order('code')
+    setCourts(data ?? [])
+  }, [])
+
   useEffect(() => {
-    Promise.all([loadTeams(), loadMatches()]).then(() => setLoading(false))
-  }, [loadTeams, loadMatches])
+    Promise.all([loadTeams(), loadMatches(), loadCourts()]).then(() => setLoading(false))
+  }, [loadTeams, loadMatches, loadCourts])
 
   function refreshAll() {
     loadTeams()
@@ -70,12 +76,14 @@ export default function ScheduleAdmin() {
   const availableDays = [...new Set(matches.map((m) => dateKeyOf(m.scheduled_at)))].sort()
   const printMatches =
     printDay === 'all' ? matches : matches.filter((m) => dateKeyOf(m.scheduled_at) === printDay)
+  const refereesByCourt = Object.fromEntries(courts.map((c) => [c.code, c.referee_name]))
 
   return (
     <div>
       <ScheduleGenerator teams={teams} existingCount={matches.length} onGenerated={refreshAll} />
       <MatchList matches={matches} onChanged={loadMatches} />
       <AddMatchForm teams={teams} onAdded={loadMatches} />
+      <CourtsAdmin courts={courts} onChanged={loadCourts} />
 
       <section className="event-panel">
         <h3>Menetrend nyomtatása</h3>
@@ -95,9 +103,13 @@ export default function ScheduleAdmin() {
             Menetrend nyomtatása / PDF letöltése
           </button>
         </div>
+        <p className="hint">
+          A nyomtatott lapon az összesített menetrend mellett külön A és B
+          pályás bontás is szerepel, a pályához rendelt játékvezető nevével.
+        </p>
       </section>
 
-      <PrintableSchedule matches={printMatches} siteUrl={SITE_URL} />
+      <PrintableSchedule matches={printMatches} siteUrl={SITE_URL} referees={refereesByCourt} />
     </div>
   )
 }
@@ -329,6 +341,60 @@ function MatchRow({ match, onChanged }) {
         </button>
       )}
     </li>
+  )
+}
+
+function CourtsAdmin({ courts, onChanged }) {
+  return (
+    <section className="event-panel">
+      <h3>Pályák – játékvezetők</h3>
+      <p className="hint">
+        Az itt megadott név a nyomtatott menetrenden is megjelenik az adott
+        pályához tartozó mérkőzések mellett.
+      </p>
+      <div className="form-row">
+        {COURTS.map((code) => {
+          const court = courts.find((c) => c.code === code)
+          return (
+            <CourtRefereeField
+              key={code}
+              code={code}
+              value={court?.referee_name ?? ''}
+              onSaved={onChanged}
+            />
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+function CourtRefereeField({ code, value, onSaved }) {
+  const [name, setName] = useState(value)
+  const [pending, setPending] = useState(false)
+
+  useEffect(() => {
+    setName(value)
+  }, [value])
+
+  async function save() {
+    setPending(true)
+    await supabase.from('courts').update({ referee_name: name.trim() || null }).eq('code', code)
+    setPending(false)
+    onSaved()
+  }
+
+  return (
+    <label>
+      {code} pálya játékvezetője
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onBlur={save}
+        placeholder="Név"
+        disabled={pending}
+      />
+    </label>
   )
 }
 
