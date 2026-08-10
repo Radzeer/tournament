@@ -17,13 +17,7 @@ export default function PrintableSchedule({ matches, siteUrl }) {
   return (
     <div className="print-schedule">
       <div className="print-schedule-header">
-        <h1>Mérkőzés menetrend</h1>
-        {siteUrl && (
-          <div className="print-qr">
-            <QRCodeSVG value={siteUrl} size={96} />
-            <span>{siteUrl}</span>
-          </div>
-        )}
+        
       </div>
 
       {days.length === 0 && <p>Nincs felvitt mérkőzés.</p>}
@@ -37,7 +31,9 @@ export default function PrintableSchedule({ matches, siteUrl }) {
                 <th>Pálya</th>
                 <th>Hazai</th>
                 <th>Vendég</th>
+                <th>Játékvezető</th>
                 <th>Eredmény</th>
+
               </tr>
             </thead>
             <tbody>
@@ -47,6 +43,7 @@ export default function PrintableSchedule({ matches, siteUrl }) {
                   <td>{m.court}</td>
                   <td>{m.home_team}</td>
                   <td>{m.away_team}</td>
+                  <td></td>
                   <td>{m.status === 'upcoming' ? '–' : `${m.home_goals} : ${m.away_goals}`}</td>
                 </tr>
               ))}
@@ -54,6 +51,16 @@ export default function PrintableSchedule({ matches, siteUrl }) {
           </table>
         </div>
       ))}
+      <div className="print-schedule-footer">
+        <h1>Mérkőzések és a tabella aktuális eredményei<br/>elérhetőek az alábbi QR kód beolvasásával!</h1>
+        
+        {siteUrl && (
+          <div className="print-qr">
+            <QRCodeSVG value={siteUrl} size={96} />
+            <span>{siteUrl}</span>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
