@@ -335,7 +335,16 @@ button.danger:hover {
 .match-list li {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
+}
+.match-list li .event-panel,
+.match-list li > .hint {
+  flex-basis: 100%;
+  margin-top: 0.5rem;
+}
+.match-list li .event-panel {
+  margin-bottom: 0;
 }
 .match-list li button:first-child {
   flex: 1;

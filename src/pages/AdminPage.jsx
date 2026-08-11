@@ -127,8 +127,6 @@ function MatchManager() {
     loadMatches()
   }, [loadMatches])
 
-  const selected = matches.find((m) => m.match_id === selectedId)
-
   async function startMatch(matchId) {
     await supabase.from('matches').update({ status: 'live' }).eq('id', matchId)
     loadMatches()
@@ -158,25 +156,25 @@ function MatchManager() {
                 Meccs indítása
               </button>
             )}
+
+            {m.match_id === selectedId && m.status === 'live' && (
+              <MatchEventPanel
+                match={m}
+                onFinish={() => finishMatch(m.match_id)}
+                onEventRecorded={loadMatches}
+              />
+            )}
+
+            {m.match_id === selectedId && m.status === 'upcoming' && (
+              <p className="hint">
+                Ez a mérkőzés még nem indult el. Gólt csak az "Meccs indítása" gomb
+                megnyomása után lehet rögzíteni hozzá.
+              </p>
+            )}
           </li>
         ))}
         {matches.length === 0 && <p className="hint">Nincs induló vagy élő mérkőzés.</p>}
       </ul>
-
-      {selected && selected.status === 'live' && (
-        <MatchEventPanel
-          match={selected}
-          onFinish={() => finishMatch(selected.match_id)}
-          onEventRecorded={loadMatches}
-        />
-      )}
-
-      {selected && selected.status === 'upcoming' && (
-        <p className="hint">
-          Ez a mérkőzés még nem indult el. Gólt csak az "Meccs indítása" gomb megnyomása után
-          lehet rögzíteni hozzá.
-        </p>
-      )}
     </div>
   )
 }

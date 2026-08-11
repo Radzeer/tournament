@@ -100,27 +100,35 @@ export default function ScheduleAdmin() {
       <CourtsAdmin courts={courts} onChanged={loadCourts} />
 
       <section className="event-panel">
+        <h3>Nyomtatás – nap kiválasztása</h3>
+        <p className="hint">
+          Ez a szűrő mindkét nyomtatványra (menetrend és bírói jegyzőkönyv)
+          vonatkozik.
+        </p>
+        <label className="print-day-select">
+          Nyomtatandó nap
+          <select value={printDay} onChange={(e) => setPrintDay(e.target.value)}>
+            <option value="all">Összes nap</option>
+            {availableDays.map((day) => (
+              <option key={day} value={day}>
+                {formatDateHeading(day)}
+              </option>
+            ))}
+          </select>
+        </label>
+      </section>
+
+      <section className="event-panel">
         <h3>Menetrend nyomtatása</h3>
-        <div className="print-button-row">
-          <label className="print-day-select">
-            Nyomtatandó nap
-            <select value={printDay} onChange={(e) => setPrintDay(e.target.value)}>
-              <option value="all">Összes nap</option>
-              {availableDays.map((day) => (
-                <option key={day} value={day}>
-                  {formatDateHeading(day)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button className="ghost" onClick={printSchedule}>
-            Menetrend nyomtatása / PDF letöltése
-          </button>
-        </div>
         <p className="hint">
           A nyomtatott lapon az összesített menetrend mellett külön A és B
           pályás bontás is szerepel, a pályához rendelt játékvezető nevével.
         </p>
+        <div className="print-button-row">
+          <button className="ghost" onClick={printSchedule}>
+            Menetrend nyomtatása / PDF letöltése
+          </button>
+        </div>
       </section>
 
       <section className="event-panel">
