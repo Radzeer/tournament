@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabaseClient'
 import { generateRoundRobin } from '../lib/roundRobin'
 import { dateKeyOf, formatDateHeading } from '../lib/dateFormat.js'
 import PrintableSchedule from './PrintableSchedule.jsx'
+import RefereeSheet from './RefereeSheet.jsx'
 
 const SITE_URL = import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin
 
@@ -43,6 +44,7 @@ export default function ScheduleAdmin() {
   const [courts, setCourts] = useState([])
   const [loading, setLoading] = useState(true)
   const [printDay, setPrintDay] = useState('all')
+  const [refereeCourt, setRefereeCourt] = useState('A')
 
   const loadTeams = useCallback(async () => {
     const { data } = await supabase.from('teams').select('*').order('name')
@@ -69,6 +71,18 @@ export default function ScheduleAdmin() {
   function refreshAll() {
     loadTeams()
     loadMatches()
+  }
+
+  function printSchedule() {
+    document.body.classList.add('printing-schedule')
+    window.print()
+    document.body.classList.remove('printing-schedule')
+  }
+
+  function printRefereeSheet() {
+    document.body.classList.add('printing-referee')
+    window.print()
+    document.body.classList.remove('printing-referee')
   }
 
   if (loading) return <p className="hint">Betöltés…</p>
@@ -99,7 +113,7 @@ export default function ScheduleAdmin() {
               ))}
             </select>
           </label>
-          <button className="ghost" onClick={() => window.print()}>
+          <button className="ghost" onClick={printSchedule}>
             Menetrend nyomtatása / PDF letöltése
           </button>
         </div>
@@ -109,7 +123,35 @@ export default function ScheduleAdmin() {
         </p>
       </section>
 
+      <section className="event-panel">
+        <h3>Bírói jegyzőkönyv nyomtatása</h3>
+        <p className="hint">
+          Pályánként egy üres jegyzőkönyv, amin a bíró percenként fel tudja
+          jegyezni a gólokat és eseményeket a mérkőzés alatt.
+        </p>
+        <div className="print-button-row">
+          <label className="print-day-select">
+            Pálya
+            <select value={refereeCourt} onChange={(e) => setRefereeCourt(e.target.value)}>
+              {COURTS.map((c) => (
+                <option key={c} value={c}>
+                  {c} pálya
+                </option>
+              ))}
+            </select>
+          </label>
+          <button className="ghost" onClick={printRefereeSheet}>
+            Jegyzőkönyv nyomtatása / PDF letöltése
+          </button>
+        </div>
+      </section>
+
       <PrintableSchedule matches={printMatches} siteUrl={SITE_URL} referees={refereesByCourt} />
+      <RefereeSheet
+        matches={printMatches}
+        court={refereeCourt}
+        refereeName={refereesByCourt[refereeCourt]}
+      />
     </div>
   )
 }

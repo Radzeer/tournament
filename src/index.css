@@ -470,7 +470,8 @@ button.danger:hover {
   background: var(--surface);
 }
 
-.print-schedule {
+.print-schedule,
+.print-referee-sheet {
   display: none;
 }
 
@@ -478,11 +479,13 @@ button.danger:hover {
   body * {
     visibility: hidden;
   }
-  .print-schedule,
-  .print-schedule * {
+
+  /* Menetrend nyomtatása */
+  body.printing-schedule .print-schedule,
+  body.printing-schedule .print-schedule * {
     visibility: visible;
   }
-  .print-schedule {
+  body.printing-schedule .print-schedule {
     display: block;
     position: absolute;
     top: 0;
@@ -490,6 +493,21 @@ button.danger:hover {
     width: 100%;
     color: #000;
   }
+
+  /* Bírói jegyzőkönyv nyomtatása */
+  body.printing-referee .print-referee-sheet,
+  body.printing-referee .print-referee-sheet * {
+    visibility: visible;
+  }
+  body.printing-referee .print-referee-sheet {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #000;
+  }
+
   .print-schedule-header {
     display: flex;
     align-items: center;
@@ -499,16 +517,8 @@ button.danger:hover {
     border-bottom: 2px solid #000;
     padding-bottom: 0.75rem;
   }
-  .print-schedule-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1rem;
-    border-bottom: 2px solid #000;
-    padding-bottom: 0.75rem;
-  }
-  .print-schedule h1 {
+  .print-schedule h1,
+  .print-referee-sheet h1 {
     font-family: 'Inter', sans-serif;
     font-size: 1.3rem;
     margin: 0;
@@ -541,21 +551,67 @@ button.danger:hover {
     font-size: 1rem;
     margin-bottom: 0.4rem;
   }
-  .print-schedule table {
+  .print-schedule table,
+  .print-referee-sheet table {
     width: 100%;
     border-collapse: collapse;
   }
   .print-schedule th,
-  .print-schedule td {
+  .print-schedule td,
+  .print-referee-sheet th,
+  .print-referee-sheet td {
     border: 1px solid #999;
     padding: 4px 8px;
     text-align: left;
     font-size: 0.8rem;
   }
-  .print-schedule thead {
+  .print-schedule thead,
+  .print-referee-sheet thead {
     display: table-header-group;
   }
-  .print-schedule tr {
+  .print-schedule tr,
+  .print-referee-sheet tr {
     break-inside: avoid;
+  }
+
+  /* Bírói jegyzőkönyv saját elemei */
+  .print-referee-header {
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.75rem;
+  }
+  .print-referee-header p {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+  }
+  .print-fill-line {
+    display: inline-block;
+    min-width: 160px;
+    border-bottom: 1px solid #000;
+  }
+  .print-referee-match {
+    margin-bottom: 1.5rem;
+    break-inside: avoid;
+  }
+  .print-referee-match-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+  }
+  .print-referee-teams {
+    font-weight: 700;
+    flex: 1;
+  }
+  .print-referee-score {
+    font-size: 0.85rem;
+  }
+  .print-referee-sheet td {
+    height: 22px;
+  }
+  .print-referee-signature {
+    margin-top: 2rem;
+    font-size: 0.9rem;
   }
 }
