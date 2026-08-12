@@ -225,6 +225,29 @@ function MatchEventPanel({ match, onFinish, onEventRecorded }) {
     onEventRecorded()
   }
 
+  async function undoLastEvent() {
+    const last = recentEvents[0]
+    if (!last) return
+    const { error } = await supabase.from('match_events').delete().eq('id', last.id)
+    if (error) {
+      window.alert('Nem sikerült visszavonni az eseményt: ' + error.message)
+      return
+    }
+    loadRecentEvents()
+    onEventRecorded()
+  }
+
+  async function deleteEvent(eventId) {
+    if (!window.confirm('Biztosan törlöd ezt az eseményt?')) return
+    const { error } = await supabase.from('match_events').delete().eq('id', eventId)
+    if (error) {
+      window.alert('Nem sikerült törölni az eseményt: ' + error.message)
+      return
+    }
+    loadRecentEvents()
+    onEventRecorded()
+  }
+
   return (
     <section className="event-panel">
       <div className="event-panel-header">
@@ -251,14 +274,23 @@ function MatchEventPanel({ match, onFinish, onEventRecorded }) {
         <TeamEventButtons teamName={match.away_team} teamId={awayId} onRecord={recordEvent} />
       </div>
 
+      <button className="ghost undo-button" disabled={recentEvents.length === 0} onClick={undoLastEvent}>
+        ↺ Legutóbbi esemény visszavonása
+      </button>
+
       <div className="event-log">
         <h4>Utolsó események</h4>
         <ul>
           {recentEvents.map((e) => (
             <li key={e.id}>
-              {e.minute != null ? `${e.minute}'` : '—'} · {EVENT_LABELS[e.event_type]}
-              {e.team_id === homeId && ` (${match.home_team})`}
-              {e.team_id === awayId && ` (${match.away_team})`}
+              <span>
+                {e.minute != null ? `${e.minute}'` : '—'} · {EVENT_LABELS[e.event_type]}
+                {e.team_id === homeId && ` (${match.home_team})`}
+                {e.team_id === awayId && ` (${match.away_team})`}
+              </span>
+              <button className="ghost small" onClick={() => deleteEvent(e.id)}>
+                Törlés
+              </button>
             </li>
           ))}
           {recentEvents.length === 0 && <li>Még nincs esemény.</li>}

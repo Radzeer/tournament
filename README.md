@@ -60,6 +60,8 @@ CREATE POLICY "Publikus olvasás" ON courts FOR SELECT USING (true);
 -- Csak bejelentkezett admin írhat
 CREATE POLICY "Admin írás" ON match_events FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Admin törlés" ON match_events FOR DELETE
+  USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Admin írás" ON matches FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
@@ -163,6 +165,19 @@ ALTER TABLE courts ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Publikus olvasás" ON courts FOR SELECT USING (true);
 CREATE POLICY "Admin módosítás" ON courts FOR UPDATE
+  USING (auth.role() = 'authenticated');
+```
+
+### Migráció – esemény (gól/büntető) törlésének engedélyezése
+
+Ha az admin felület "Legutóbbi esemény visszavonása" vagy a
+mérkőzésesemény-lista "Törlés" gombja nem csinál semmit (nincs hiba,
+csak nem törlődik semmi), az azért van, mert a `match_events` táblán
+korábban csak `INSERT` policy volt, `DELETE` nem – RLS mellett ez
+alapból tiltja a törlést. Ezt kell pótolnod:
+
+```sql
+CREATE POLICY "Admin törlés" ON match_events FOR DELETE
   USING (auth.role() = 'authenticated');
 ```
 
