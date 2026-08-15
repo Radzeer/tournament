@@ -27,8 +27,8 @@ function ScheduleTable({ matches, referees }) {
                 <th>Pálya</th>
                 <th>Hazai</th>
                 <th>Vendég</th>
-                <th>Eredmény</th>
                 <th>Játékvezető</th>
+                <th>Eredmény</th>
               </tr>
             </thead>
             <tbody>
@@ -38,8 +38,8 @@ function ScheduleTable({ matches, referees }) {
                   <td>{m.court}</td>
                   <td>{m.home_team}</td>
                   <td>{m.away_team}</td>
-                  <td>{m.status === 'upcoming' ? '–' : `${m.home_goals} : ${m.away_goals}`}</td>
                   <td>{referees?.[m.court] || '—'}</td>
+                  <td>{m.status === 'upcoming' ? '–' : `${m.home_goals} : ${m.away_goals}`}</td>
                 </tr>
               ))}
             </tbody>
@@ -56,8 +56,13 @@ export default function PrintableSchedule({ matches, siteUrl, referees = {} }) {
 
   return (
     <div className="print-schedule">
+      
+
+      <ScheduleTable matches={matches} referees={referees} />
+
       <div className="print-schedule-header">
-        <h1>Mérkőzés menetrend</h1>
+        <h1>Mérkőzések és a tabella aktuális eredményei<br/>elérhetőek az alábbi QR kód beolvasásával!</h1>
+        
         {siteUrl && (
           <div className="print-qr">
             <QRCodeSVG value={siteUrl} size={96} />
@@ -65,8 +70,6 @@ export default function PrintableSchedule({ matches, siteUrl, referees = {} }) {
           </div>
         )}
       </div>
-
-      <ScheduleTable matches={matches} referees={referees} />
 
       <h1 className="print-court-title print-page-break">
         A pálya menetrendje
